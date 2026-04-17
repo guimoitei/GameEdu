@@ -3,16 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameEdu Universe - Watch</title>
+    <title>GameEdu Universe - Pro</title>
     <style>
-        :root { --primary: #46178f; --secondary: #25076b; --correct: #26890c; --accent: #ffa600; --bg: #f0f2f5; }
+        :root { --primary: #46178f; --secondary: #25076b; --correct: #26890c; --accent: #ffa600; --bg: #f0f2f5; --white: #ffffff; }
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
+        /* UI GERAL */
         header { background: white; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; height: 60px; box-sizing: border-box; }
         .logo { color: var(--primary); font-weight: bold; font-size: 24px; cursor: pointer; text-decoration: none; }
-        .user-stats { display: flex; gap: 15px; align-items: center; font-weight: bold; }
-        .coin-display { color: var(--accent); background: #fff4e0; padding: 5px 12px; border-radius: 15px; border: 1px solid #ffe0a3; }
+        
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; transition: 0.3s; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 5px rgba(70, 23, 143, 0.2); }
+        
+        button { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px; }
+        .btn-p { background: var(--primary); color: white; width: 100%; }
+        .btn-p:hover { background: var(--secondary); transform: translateY(-1px); }
 
+        /* LAYOUT */
         .main-container { display: flex; flex: 1; overflow: hidden; }
         .sidebar { width: 300px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .content { flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box; }
@@ -20,49 +27,39 @@
         .screen { display: none; width: 100%; }
         .active { display: flex; flex-direction: column; }
 
-        /* LAYOUT YOUTUBE STYLE */
+        /* ENGINE (VOLTOU!) */
+        .engine-slide { background: white; padding: 20px; border-radius: 12px; border: 2px solid #eee; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .opt-row { display: flex; gap: 8px; align-items: center; margin-bottom: 5px; }
+        .correct-btn { width: 45px; height: 42px; background: #eee; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .is-correct { background: var(--correct) !important; color: white; border-color: var(--correct); }
+
+        /* WATCH PAGE */
         .watch-container { display: grid; grid-template-columns: 1fr 350px; gap: 20px; max-width: 1400px; margin: 0 auto; width: 100%; }
-        .video-player-area { background: #000; border-radius: 12px; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .video-info { margin-top: 15px; background: white; padding: 20px; border-radius: 12px; }
-        .suggested-list { display: flex; flex-direction: column; gap: 10px; }
-        .mini-card { display: flex; gap: 10px; background: white; padding: 8px; border-radius: 8px; cursor: pointer; border: 1px solid #eee; transition: 0.2s; }
-        .mini-card:hover { background: #f0f0f0; }
-        .mini-thumb { width: 100px; height: 56px; background: var(--primary); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold; }
-
-        /* GAME STYLES */
-        .embed-frame { width: 100%; height: 100%; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 10; }
+        .player-box { background: #000; border-radius: 15px; aspect-ratio: 16 / 9; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .embed-area { width: 100%; height: 100%; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .mini-card { display: flex; gap: 10px; background: white; padding: 10px; border-radius: 10px; cursor: pointer; border: 1px solid #eee; margin-bottom: 10px; }
         
-        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin: 20px auto; text-align: center; }
-        .btn-p { background: var(--primary); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-play-big { background: var(--correct); font-size: 20px; padding: 15px 40px; border-radius: 50px; width: auto; }
-
-        .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .quiz-card { background: white; border-radius: 12px; overflow: hidden; cursor: pointer; border-bottom: 4px solid #ddd; transition: 0.2s; }
-        .quiz-card:hover { transform: translateY(-5px); }
-        .quiz-thumb { height: 120px; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; }
-        .quiz-details { padding: 10px; }
-
-        #chat-messages { height: 200px; overflow-y: auto; background: #fafafa; border-radius: 8px; padding: 10px; font-size: 13px; margin-bottom: 10px; border: 1px solid #eee; }
+        /* CHAT & RANK */
+        #chat-messages { height: 180px; overflow-y: auto; background: #f8f9fa; border-radius: 10px; padding: 10px; font-size: 13px; border: 1px solid #eee; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <div id="screen-auth" class="screen active" style="margin-top: 50px;">
-        <div class="card">
-            <h1 style="color: var(--primary)">GameEdu Login</h1>
+        <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; margin: 0 auto; text-align: center;">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">GameEdu</h1>
             <input type="email" id="auth-email" placeholder="E-mail">
             <input type="password" id="auth-password" placeholder="Senha">
-            <button class="btn-p" onclick="handleAuth()">Entrar no Universo</button>
+            <button class="btn-p" onclick="handleAuth()">Entrar na Plataforma</button>
         </div>
     </div>
 
     <header id="main-header" style="display:none">
-        <div class="logo" onclick="showScreen('screen-home')">GameEdu</div>
+        <div class="logo" onclick="showScreen('screen-home')">GameEdu Universe</div>
         <div class="user-stats">
-            <span class="coin-display">💰 <span id="user-coins">0</span></span>
-            <span id="display-username">...</span>
-            <button onclick="logout()" style="background:#eee; font-size: 12px; border-radius: 5px; padding: 5px 10px; border:none; cursor:pointer;">Sair</button>
+            <span style="color: var(--accent); font-weight: bold;">💰 <span id="user-coins">0</span></span>
+            <span id="display-username" style="font-weight: bold;">...</span>
+            <button onclick="logout()" style="background:#f0f0f0; padding: 5px 12px;">Sair</button>
         </div>
     </header>
 
@@ -70,55 +67,53 @@
         <div class="sidebar">
             <h3>💬 Chat Global</h3>
             <div id="chat-messages"></div>
-            <input type="text" id="chat-input" placeholder="Mensagem..." onkeypress="if(event.key=='Enter') sendChat()">
+            <input type="text" id="chat-input" placeholder="Conversar..." onkeypress="if(event.key=='Enter') sendChat()">
             
-            <h3 style="margin-top: 20px;">🏆 Ranking</h3>
-            <div id="ranking-list" style="font-size: 14px;"></div>
+            <h3 style="margin-top: 20px;">🏆 Top 5 Ricos</h3>
+            <div id="ranking-list"></div>
         </div>
 
         <div class="content">
             <div id="screen-home" class="screen active">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h2>Recomendados para Você</h2>
-                    <button class="btn-p" style="width:auto" onclick="showScreen('screen-engine')">+ Criar Quiz</button>
+                    <h2>Feed de Quizzes</h2>
+                    <button class="btn-p" style="width:auto" onclick="openEngine()">+ Criar Novo Quiz</button>
                 </div>
-                <div id="row-quizzes" class="quiz-grid"></div>
+                <div id="row-quizzes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;"></div>
             </div>
 
             <div id="screen-watch" class="screen">
                 <div class="watch-container">
-                    <div class="main-video-area">
-                        <div class="video-player-area" id="player-container">
-                            <div class="play-overlay" id="play-overlay">
-                                <h1 id="watch-title-overlay">Título do Quiz</h1>
-                                <button class="btn-p btn-play-big" onclick="startEmbeddedGame()">JOGAR AGORA</button>
+                    <div class="video-main">
+                        <div class="player-box" id="p-box">
+                            <div id="overlay-play" style="position:absolute; inset:0; background:rgba(0,0,0,0.8); display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:5;">
+                                <h1 id="w-title-big">Título</h1>
+                                <button onclick="startPlay()" style="background:var(--correct); color:white; padding:15px 40px; font-size:20px; border-radius:50px;">JOGAR</button>
                             </div>
-                            <div id="game-embed-area" class="embed-frame" style="display:none">
-                                <h2 id="game-q-text" style="color:#333; margin: 20px;"></h2>
-                                <div id="game-options-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; width:90%; flex:1; padding-bottom:20px;"></div>
+                            <div id="game-container" class="embed-area" style="display:none">
+                                <h2 id="g-q-text" style="color:#333; padding:20px; text-align:center;"></h2>
+                                <div id="g-options" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:90%; padding-bottom:20px;"></div>
                             </div>
                         </div>
-                        <div class="video-info">
-                            <h2 id="watch-title-text" style="margin:0">Carregando título...</h2>
-                            <p style="color:#666">Publicado na GameEdu Universe • 50 Moedas de Recompensa</p>
-                            <hr>
-                            <p id="watch-desc">Este é um quiz educativo criado pela comunidade GameEdu. Teste seus conhecimentos agora!</p>
+                        <div style="background:white; padding:20px; margin-top:15px; border-radius:15px;">
+                            <h2 id="w-title-sub" style="margin:0">...</h2>
+                            <p style="color:#666">Ganhe 50 moedas ao completar!</p>
                         </div>
                     </div>
-                    <div class="suggested-sidebar">
-                        <h4 style="margin-top:0">Próximos Quizzes</h4>
-                        <div id="suggested-list" class="suggested-list"></div>
+                    <div class="video-side">
+                        <h4 style="margin-top:0">Sugestões</h4>
+                        <div id="suggested-row"></div>
                     </div>
                 </div>
             </div>
 
             <div id="screen-engine" class="screen">
-                <div class="card" style="max-width: 700px; text-align: left;">
-                    <h2>🚀 Criador de Conteúdo</h2>
-                    <input type="text" id="eng-title" placeholder="Nome do seu Quiz">
-                    <div id="eng-slides-container"></div>
-                    <button onclick="addSlide()" style="background:#eee; width:100%; margin-top:10px">+ Add Pergunta</button>
-                    <button class="btn-p" style="margin-top:20px" onclick="saveQuiz()">Publicar no Feed</button>
+                <div style="background:white; padding:30px; border-radius:20px; max-width:700px; margin: 0 auto;">
+                    <h2>🚀 Criador de Quizzes</h2>
+                    <input type="text" id="eng-title" placeholder="Título do Quiz">
+                    <div id="eng-slides"></div>
+                    <button onclick="addSlide()" style="background:#eee; width:100%; margin-top:10px">+ Adicionar Pergunta</button>
+                    <button class="btn-p" style="margin-top:20px" onclick="saveQuiz()">Publicar Quiz</button>
                 </div>
             </div>
         </div>
@@ -144,8 +139,7 @@
         const db = getDatabase(app);
 
         let currentUser = null;
-        let currentQuizData = null;
-        let library = {};
+        let currentQuiz = null;
         let slides = [];
 
         window.handleAuth = () => {
@@ -159,36 +153,43 @@
         };
 
         onAuthStateChanged(auth, u => {
-            if(u) { currentUser = u; setupApp(); }
+            if(u) { currentUser = u; init(); }
             else { document.getElementById('screen-auth').style.display = 'flex'; }
         });
 
         window.logout = () => signOut(auth);
 
-        function setupApp() {
+        function init() {
             document.getElementById('screen-auth').style.display = 'none';
             document.getElementById('main-header').style.display = 'flex';
             document.getElementById('app-content').style.display = 'flex';
 
             onValue(ref(db, 'users/' + currentUser.uid), s => {
-                if(s.val()) document.getElementById('user-coins').innerText = s.val().coins;
-                if(s.val()) document.getElementById('display-username').innerText = s.val().username;
+                if(s.val()) {
+                    document.getElementById('user-coins').innerText = s.val().coins;
+                    document.getElementById('display-username').innerText = s.val().username;
+                }
             });
 
             // Ranking
-            const rankingRef = query(ref(db, 'users'), orderByChild('coins'), limitToLast(5));
-            onValue(rankingRef, s => {
+            onValue(query(ref(db, 'users'), orderByChild('coins'), limitToLast(5)), s => {
                 const list = document.getElementById('ranking-list'); list.innerHTML = "";
-                let uArr = []; s.forEach(c => uArr.push(c.val()));
-                uArr.reverse().forEach((u, i) => {
-                    list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #eee;">${i+1}º ${u.username} - 💰 ${u.coins}</div>`;
-                });
+                let arr = []; s.forEach(c => arr.push(c.val()));
+                arr.reverse().forEach((u, i) => list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #eee; font-size:14px;">${i+1}º ${u.username} - 💰 ${u.coins}</div>`);
             });
 
-            // Library & Recommendations
+            // Feed
             onValue(ref(db, 'library'), s => {
-                library = s.val() || {};
-                renderHome();
+                const row = document.getElementById('row-quizzes'); row.innerHTML = "";
+                const data = s.val();
+                if(data) Object.keys(data).forEach(k => {
+                    const c = document.createElement('div');
+                    c.className = 'mini-card';
+                    c.style.flexDirection = 'column';
+                    c.innerHTML = `<div style="height:100px; background:var(--primary); border-radius:8px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">QUIZ</div><div style="padding:10px 0;"><b>${data[k].title}</b></div>`;
+                    c.onclick = () => openWatch(k, data);
+                    row.appendChild(c);
+                });
             });
 
             // Chat
@@ -201,100 +202,93 @@
 
         window.sendChat = () => {
             const i = document.getElementById('chat-input');
-            if(!i.value) return;
-            push(ref(db, 'chat'), { user: document.getElementById('display-username').innerText, text: i.value });
+            if(i.value) push(ref(db, 'chat'), { user: document.getElementById('display-username').innerText, text: i.value });
             i.value = "";
         };
 
-        function renderHome() {
-            const row = document.getElementById('row-quizzes'); row.innerHTML = "";
-            Object.keys(library).forEach(k => {
-                const c = document.createElement('div');
-                c.className = 'quiz-card';
-                c.innerHTML = `<div class="quiz-thumb">QUIZ</div><div class="quiz-details"><b>${library[k].title}</b></div>`;
-                c.onclick = () => openWatchPage(k);
-                row.appendChild(c);
-            });
-        }
-
-        // --- WATCH PAGE LOGIC ---
-        window.openWatchPage = (id) => {
-            currentQuizData = library[id];
-            showScreen('screen-watch');
-            document.getElementById('watch-title-text').innerText = currentQuizData.title;
-            document.getElementById('watch-title-overlay').innerText = currentQuizData.title;
-            document.getElementById('play-overlay').style.display = 'flex';
-            document.getElementById('game-embed-area').style.display = 'none';
-            
-            // Sugestões (Exclui o atual)
-            const sugg = document.getElementById('suggested-list'); sugg.innerHTML = "";
-            Object.keys(library).filter(k => k !== id).slice(0, 5).forEach(k => {
-                const m = document.createElement('div');
-                m.className = 'mini-card';
-                m.innerHTML = `<div class="mini-thumb">GAME</div><div><b>${library[k].title}</b><br><small>Play Now</small></div>`;
-                m.onclick = () => openWatchPage(k);
-                sugg.appendChild(m);
-            });
-        };
-
-        window.startEmbeddedGame = () => {
-            document.getElementById('play-overlay').style.display = 'none';
-            document.getElementById('game-embed-area').style.display = 'flex';
-            runGameLoop();
-        };
-
-        function runGameLoop() {
-            let step = 0;
-            const render = () => {
-                const q = currentQuizData.questions[step];
-                if(!q) {
-                    alert("Quiz Finalizado! +50 Moedas creditadas.");
-                    update(ref(db, 'users/' + currentUser.uid), { coins: increment(50) });
-                    showScreen('screen-home');
-                    return;
-                }
-                document.getElementById('game-q-text').innerText = q.q;
-                const grid = document.getElementById('game-options-grid'); grid.innerHTML = "";
-                const colors = ['#e21b3c', '#1368ce', '#d89e00', '#26890c'];
-                q.options.forEach((opt, i) => {
-                    const b = document.createElement('button');
-                    b.className = 'btn-p'; b.style.background = colors[i];
-                    b.innerText = opt;
-                    b.onclick = () => { step++; render(); };
-                    grid.appendChild(b);
-                });
-            };
-            render();
-        }
-
-        // --- ENGINE ---
+        // ENGINE RESTORED
+        window.openEngine = () => { slides = []; document.getElementById('eng-slides').innerHTML = ""; showScreen('screen-engine'); };
+        
         window.addSlide = () => {
             const idx = slides.length;
             slides.push({ q: "", options: ["", "", "", ""], correct: 0 });
             const div = document.createElement('div');
             div.className = 'engine-slide';
-            div.style = "background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px;";
             div.innerHTML = `
-                <b>Pergunta ${idx+1}</b><br>
-                <input placeholder="Pergunta" oninput="slides[${idx}].q = this.value">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                    ${[0,1,2,3].map(o => `<input placeholder="Opção ${o+1}" oninput="slides[${idx}].options[${o}] = this.value">`).join('')}
+                <b>Questão ${idx+1}</b>
+                <input placeholder="Enunciado" oninput="slides[${idx}].q = this.value">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    ${[0,1,2,3].map(o => `
+                        <div class="opt-row">
+                            <input placeholder="Opção ${o+1}" oninput="slides[${idx}].options[${o}] = this.value">
+                            <button class="correct-btn" id="check-${idx}-${o}" onclick="window.markCorrect(${idx}, ${o})">✓</button>
+                        </div>
+                    `).join('')}
                 </div>
             `;
-            document.getElementById('eng-slides-container').appendChild(div);
+            document.getElementById('eng-slides').appendChild(div);
         };
+
+        window.markCorrect = (s, o) => {
+            slides[s].correct = o;
+            document.querySelectorAll(`[id^="check-${s}"]`).forEach(b => b.classList.remove('is-correct'));
+            document.getElementById(`check-${s}-${o}`).classList.add('is-correct');
+        };
+
         window.saveQuiz = async () => {
             const t = document.getElementById('eng-title').value;
-            if(!t || slides.length === 0) return alert("Erro no quiz");
+            if(!t || slides.length === 0) return alert("Preencha o quiz!");
             await push(ref(db, 'library'), { title: t, questions: slides });
             update(ref(db, 'users/' + currentUser.uid), { coins: increment(50) });
-            location.reload();
+            alert("Quiz publicado!"); showScreen('screen-home');
+        };
+
+        // WATCH & PLAY
+        window.openWatch = (id, library) => {
+            currentQuiz = library[id];
+            showScreen('screen-watch');
+            document.getElementById('w-title-big').innerText = currentQuiz.title;
+            document.getElementById('w-title-sub').innerText = currentQuiz.title;
+            document.getElementById('overlay-play').style.display = 'flex';
+            document.getElementById('game-container').style.display = 'none';
+
+            const sugg = document.getElementById('suggested-row'); sugg.innerHTML = "";
+            Object.keys(library).filter(k => k !== id).slice(0, 4).forEach(k => {
+                const m = document.createElement('div');
+                m.className = 'mini-card';
+                m.innerHTML = `<div style="width:60px; height:40px; background:var(--primary); border-radius:4px;"></div><div><b>${library[k].title}</b></div>`;
+                m.onclick = () => openWatch(k, library);
+                sugg.appendChild(m);
+            });
+        };
+
+        window.startPlay = () => {
+            document.getElementById('overlay-play').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
+            let step = 0;
+            const render = () => {
+                const q = currentQuiz.questions[step];
+                if(!q) { 
+                    alert("Fim! +50 Moedas!"); 
+                    update(ref(db, 'users/'+currentUser.uid), { coins: increment(50) });
+                    showScreen('screen-home'); return; 
+                }
+                document.getElementById('g-q-text').innerText = q.q;
+                const grid = document.getElementById('g-options'); grid.innerHTML = "";
+                const cols = ['#e21b3c', '#1368ce', '#d89e00', '#26890c'];
+                q.options.forEach((o, i) => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-p'; b.style.background = cols[i]; b.innerText = o;
+                    b.onclick = () => { step++; render(); };
+                    grid.appendChild(b);
+                });
+            };
+            render();
         };
 
         window.showScreen = (id) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            window.scrollTo(0,0);
         };
     </script>
 </body>
