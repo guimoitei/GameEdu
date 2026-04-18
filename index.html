@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameEdu Universe - Safety & Pro Engine</title>
+    <title>GameEdu Universe - Pro Safety</title>
     <style id="dynamic-theme">
         :root { --primary: #46178f; --secondary: #25076b; --correct: #26890c; --accent: #ffa600; --bg: #f0f2f5; --text: #333; }
     </style>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: 0.5s; }
         
-        /* HEADER */
         header { background: white; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; height: 65px; box-sizing: border-box; }
         .logo { color: var(--primary); font-weight: bold; font-size: 24px; cursor: pointer; }
         .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; margin-left: 10px; }
 
-        /* LAYOUT */
         .main-container { display: flex; flex: 1; overflow: hidden; }
         .sidebar { width: 300px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; }
         .content { flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box; }
@@ -29,7 +27,13 @@
         .correct-btn { width: 40px; height: 40px; cursor: pointer; border: 1px solid #ccc; border-radius: 8px; background: #eee; font-weight: bold; }
         .is-correct { background: #26890c !important; color: white; border-color: #26890c; }
 
-        /* UI COMPONENTS */
+        /* WATCH PAGE (YOUTUBE STYLE) */
+        .watch-container { display: grid; grid-template-columns: 1fr 320px; gap: 20px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .player-box { background: #000; border-radius: 15px; aspect-ratio: 16/9; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+        .game-embed { width: 100%; height: 100%; background: white; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .suggestion-card { display: flex; gap: 10px; background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; border: 1px solid #eee; font-size: 13px; }
+
+        /* UI */
         .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; margin: auto; text-align: center; }
         input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 15px; box-sizing: border-box; }
         button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
@@ -50,13 +54,12 @@
             <label style="display:block; text-align:left; font-size: 11px; margin-top: 5px; color: #666;">Data de Nascimento:</label>
             <input type="date" id="auth-birth">
             <button class="btn-p" onclick="handleAuth()">Entrar / Registrar</button>
-            <div id="auth-error" style="color: red; margin-top: 10px; font-size: 13px;"></div>
         </div>
     </div>
 
     <header id="main-header" style="display:none">
         <div style="display:flex; align-items:center;">
-            <div class="logo" onclick="location.reload()">GameEdu</div>
+            <div class="logo" onclick="showScreen('screen-home')">GameEdu</div>
             <div id="age-badge" class="badge"></div>
         </div>
         <div style="display:flex; align-items:center; gap:15px;">
@@ -66,11 +69,11 @@
     </header>
 
     <div class="main-container" id="app-content" style="display:none">
-        <div class="sidebar" id="sidebar-social">
+        <div class="sidebar">
             <div id="chat-section">
                 <h3>💬 Chat <span id="chat-type"></span></h3>
                 <div id="chat-box"></div>
-                <input type="text" id="chat-input" placeholder="Mensagem..." onkeypress="if(event.key=='Enter') sendChat()">
+                <input type="text" id="chat-input" placeholder="Diga oi..." onkeypress="if(event.key=='Enter') sendChat()">
             </div>
             <h3 style="margin-top:20px;">🏆 Ranking</h3>
             <div id="ranking-list" style="font-size: 13px;"></div>
@@ -79,27 +82,44 @@
         <div class="content">
             <div id="screen-home" class="screen active">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h2>Quizzes Sugeridos</h2>
+                    <h2>Feed de Quizzes</h2>
                     <button class="btn-p" style="width:auto" onclick="openEngine()">+ Criar Quiz</button>
                 </div>
                 <div id="quiz-list" class="quiz-grid"></div>
             </div>
 
-            <div id="screen-engine" class="screen">
-                <div class="card" style="max-width: 650px; text-align: left;">
-                    <h2 style="margin-top:0">🚀 Criador de Quizzes</h2>
-                    <input type="text" id="eng-title" placeholder="Nome do Quiz">
-                    <div id="eng-container"></div>
-                    <button onclick="addSlide()" style="background:#eee; width:100%; margin-top:10px">+ Add Pergunta</button>
-                    <button class="btn-p" style="margin-top:20px" onclick="saveQuiz()">Publicar (+50 Moedas)</button>
+            <div id="screen-watch" class="screen">
+                <div class="watch-container">
+                    <div>
+                        <div class="player-box">
+                            <div id="watch-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.8); display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:10; text-align:center; padding:20px;">
+                                <h1 id="w-title-big">...</h1>
+                                <button class="btn-p" style="width:auto; padding:15px 40px; border-radius:50px; font-size:18px; background:var(--correct)" onclick="startEmbeddedGame()">JOGAR AGORA</button>
+                            </div>
+                            <div id="game-embed" class="game-embed">
+                                <h2 id="g-q-text" style="color:#333; margin-bottom:20px; text-align:center;"></h2>
+                                <div id="g-options" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;"></div>
+                            </div>
+                        </div>
+                        <div style="background:white; padding:20px; margin-top:15px; border-radius:15px;">
+                            <h2 id="w-title-sub" style="margin:0">...</h2>
+                            <p style="color:#666">Ganhe 50 moedas ao completar este desafio!</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-top:0">Próximos Quizzes</h4>
+                        <div id="watch-suggestions"></div>
+                    </div>
                 </div>
             </div>
 
-            <div id="screen-play" class="screen">
-                <div class="card">
-                    <h2 id="w-title" style="color:var(--primary)"></h2>
-                    <h3 id="g-q-text"></h3>
-                    <div id="g-options" class="quiz-grid" style="grid-template-columns: 1fr 1fr;"></div>
+            <div id="screen-engine" class="screen">
+                <div class="card" style="max-width: 650px; text-align: left;">
+                    <h2 style="margin-top:0">🚀 Criador Profissional</h2>
+                    <input type="text" id="eng-title" placeholder="Título do Quiz">
+                    <div id="eng-container"></div>
+                    <button onclick="addSlide()" style="background:#eee; width:100%; margin-top:10px">+ Add Pergunta</button>
+                    <button class="btn-p" style="margin-top:20px" onclick="saveQuiz()">Publicar (+50 Moedas)</button>
                 </div>
             </div>
         </div>
@@ -128,35 +148,28 @@
         let userData = null;
         let slides = [];
         let activeQuiz = null;
+        let library = {};
 
-        // --- AUTH & AGE ---
+        // AUTH & AGE
         window.handleAuth = () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
-            const birth = document.getElementById('auth-birth').value;
-
-            signInWithEmailAndPassword(auth, email, pass).catch(() => {
-                if(!birth) return alert("Data de nascimento obrigatória para novos cadastros!");
-                createUserWithEmailAndPassword(auth, email, pass).then(res => {
-                    const age = calculateAge(birth);
+            const e = document.getElementById('auth-email').value;
+            const p = document.getElementById('auth-password').value;
+            const b = document.getElementById('auth-birth').value;
+            signInWithEmailAndPassword(auth, e, p).catch(() => {
+                if(!b) return alert("Data de nascimento obrigatória!");
+                createUserWithEmailAndPassword(auth, e, p).then(res => {
+                    const age = calculateAge(b);
                     let cat = age >= 18 ? "adult" : (age >= 12 ? "teen" : "kids");
-                    set(ref(db, 'users/' + res.user.uid), { username: email.split('@')[0], coins: 100, category: cat });
+                    set(ref(db, 'users/' + res.user.uid), { username: e.split('@')[0], coins: 100, category: cat });
                 });
             });
         };
-
-        function calculateAge(b) {
-            const today = new Date(); const birth = new Date(b);
-            let age = today.getFullYear() - birth.getFullYear();
-            if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
-            return age;
-        }
-
+        function calculateAge(b) { const t = new Date(); const br = new Date(b); let a = t.getFullYear() - br.getFullYear(); if (t.getMonth() < br.getMonth() || (t.getMonth() === br.getMonth() && t.getDate() < br.getDate())) a--; return a; }
+        
         onAuthStateChanged(auth, u => {
             if(u) { currentUser = u; setupApp(); }
             else { document.getElementById('screen-auth').style.display='flex'; document.getElementById('main-header').style.display='none'; document.getElementById('app-content').style.display='none'; }
         });
-
         window.logout = () => signOut(auth);
 
         function setupApp() {
@@ -169,78 +182,92 @@
                     document.getElementById('app-content').style.display='flex';
                     document.getElementById('display-username').innerText = userData.username;
                     document.getElementById('user-coins').innerText = userData.coins;
-                    loadChat(userData.category);
+                    loadSocial(userData.category);
                     loadQuizzes();
                 }
             });
         }
 
-        // --- THEMES ---
         function applyTheme(cat) {
-            const style = document.getElementById('dynamic-theme');
-            const badge = document.getElementById('age-badge');
+            const s = document.getElementById('dynamic-theme');
+            const b = document.getElementById('age-badge');
             if(cat === "kids") {
-                style.innerHTML = `:root { --primary: #ff8c00; --correct: #00ff00; --accent: #00aaff; --bg: #e0f7ff; --text: #003366; }`;
+                s.innerHTML = `:root { --primary: #ff8c00; --correct: #00ff00; --accent: #00aaff; --bg: #e0f7ff; --text: #003366; }`;
                 document.getElementById('chat-section').style.display = "none";
-                badge.innerText = "KIDS 🧸"; badge.style.background = "#ff8c00"; badge.style.color = "#fff";
+                b.innerText = "KIDS 🧸"; b.style.background = "#ff8c00"; b.style.color = "#fff";
             } else if(cat === "teen") {
-                style.innerHTML = `:root { --primary: #000; --correct: #26890c; --accent: #888; --bg: #fff; --text: #000; }`;
+                s.innerHTML = `:root { --primary: #000; --correct: #26890c; --accent: #888; --bg: #fff; --text: #000; }`;
                 document.getElementById('chat-section').style.display = "block";
                 document.getElementById('chat-type').innerText = "Teen";
-                badge.innerText = "TEEN ⚡"; badge.style.background = "#000"; badge.style.color = "#fff";
+                b.innerText = "TEEN ⚡"; b.style.background = "#000"; b.style.color = "#fff";
             } else {
-                style.innerHTML = `:root { --primary: #46178f; --correct: #26890c; --accent: #ffa600; --bg: #f0f2f5; --text: #333; }`;
+                s.innerHTML = `:root { --primary: #46178f; --correct: #26890c; --accent: #ffa600; --bg: #f0f2f5; --text: #333; }`;
                 document.getElementById('chat-section').style.display = "block";
                 document.getElementById('chat-type').innerText = "Adult";
-                badge.innerText = "ADULT 🔞"; badge.style.background = "#46178f"; badge.style.color = "#fff";
+                b.innerText = "ADULT 🔞"; b.style.background = "#46178f"; b.style.color = "#fff";
             }
         }
 
-        // --- CHAT & QUIZ ---
-        function loadChat(cat) {
+        function loadSocial(cat) {
             if(cat === "kids") return;
-            const path = cat === "adult" ? 'chat_adult' : 'chat_teen';
-            onValue(ref(db, path), s => {
+            onValue(ref(db, cat === "adult" ? 'chat_adult' : 'chat_teen'), s => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
                 if(s.val()) Object.values(s.val()).slice(-15).forEach(m => box.innerHTML += `<div><b>${m.user}:</b> ${m.text}</div>`);
                 box.scrollTop = box.scrollHeight;
             });
         }
-
         window.sendChat = () => {
             const i = document.getElementById('chat-input'); if(!i.value) return;
-            const path = userData.category === "adult" ? 'chat_adult' : 'chat_teen';
-            push(ref(db, path), { user: userData.username, text: i.value }); i.value = "";
+            push(ref(db, userData.category === "adult" ? 'chat_adult' : 'chat_teen'), { user: userData.username, text: i.value }); i.value = "";
         };
 
         function loadQuizzes() {
             onValue(ref(db, 'library'), s => {
+                library = s.val() || {};
                 const grid = document.getElementById('quiz-list'); grid.innerHTML = "";
-                if(s.val()) Object.keys(s.val()).forEach(k => {
-                    const c = document.createElement('div'); c.className = "quiz-card"; c.innerText = s.val()[k].title;
-                    c.onclick = () => playQuiz(s.val()[k]); grid.appendChild(c);
+                Object.keys(library).forEach(k => {
+                    const c = document.createElement('div'); c.className = "quiz-card"; c.innerText = library[k].title;
+                    c.onclick = () => openWatch(k); grid.appendChild(c);
                 });
             });
         }
 
-        function playQuiz(data) {
-            activeQuiz = data; let step = 0; showScreen('screen-play');
-            document.getElementById('w-title').innerText = data.title;
+        // WATCH PAGE LOGIC
+        window.openWatch = (id) => {
+            activeQuiz = library[id];
+            showScreen('screen-watch');
+            document.getElementById('w-title-big').innerText = activeQuiz.title;
+            document.getElementById('w-title-sub').innerText = activeQuiz.title;
+            document.getElementById('watch-overlay').style.display = "flex";
+            document.getElementById('game-embed').style.display = "none";
+            
+            const sugg = document.getElementById('watch-suggestions'); sugg.innerHTML = "";
+            Object.keys(library).filter(k => k !== id).slice(0, 4).forEach(k => {
+                const m = document.createElement('div'); m.className = 'suggestion-card';
+                m.innerHTML = `<div style="width:60px; height:40px; background:var(--primary); border-radius:4px;"></div><div><b>${library[k].title}</b></div>`;
+                m.onclick = () => openWatch(k); sugg.appendChild(m);
+            });
+        };
+
+        window.startEmbeddedGame = () => {
+            document.getElementById('watch-overlay').style.display = "none";
+            document.getElementById('game-embed').style.display = "flex";
+            let step = 0;
             const render = () => {
                 const q = activeQuiz.questions[step];
-                if(!q) { alert("Finalizado! +50 Moedas."); update(ref(db, 'users/'+currentUser.uid), { coins: increment(50) }); showScreen('screen-home'); return; }
+                if(!q) { alert("Fim! +50 Moedas"); update(ref(db, 'users/'+currentUser.uid), { coins: increment(50) }); showScreen('screen-home'); return; }
                 document.getElementById('g-q-text').innerText = q.q;
-                const opts = document.getElementById('g-options'); opts.innerHTML = "";
+                const optD = document.getElementById('g-options'); optD.innerHTML = "";
                 const colors = ['#e21b3c', '#1368ce', '#d89e00', '#26890c'];
                 q.options.forEach((o, i) => {
                     const b = document.createElement('button'); b.className="btn-p"; b.style.background=colors[i]; b.innerText=o;
-                    b.onclick = () => { step++; render(); }; opts.appendChild(b);
+                    b.onclick = () => { step++; render(); }; optD.appendChild(b);
                 });
             };
             render();
         }
 
-        // --- ENGINE PRO ---
+        // ENGINE
         window.openEngine = () => { slides = []; document.getElementById('eng-container').innerHTML = ""; showScreen('screen-engine'); };
         window.addSlide = () => {
             const idx = slides.length;
@@ -248,12 +275,8 @@
             const div = document.createElement('div'); div.className = "engine-slide";
             div.innerHTML = `<input placeholder="Pergunta ${idx+1}" oninput="slides[${idx}].q = this.value">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    ${[0,1,2,3].map(o => `
-                        <div class="opt-row">
-                            <input placeholder="Opção ${o+1}" oninput="slides[${idx}].options[${o}] = this.value">
-                            <button class="correct-btn ${o==0?'is-correct':''}" id="chk-${idx}-${o}" onclick="window.setCorrect(${idx}, ${o})">✓</button>
-                        </div>
-                    `).join('')}
+                    ${[0,1,2,3].map(o => `<div class="opt-row"><input placeholder="Opção ${o+1}" oninput="slides[${idx}].options[${o}] = this.value">
+                    <button class="correct-btn ${o==0?'is-correct':''}" id="chk-${idx}-${o}" onclick="window.setCorrect(${idx}, ${o})">✓</button></div>`).join('')}
                 </div>`;
             document.getElementById('eng-container').appendChild(div);
         };
@@ -263,7 +286,7 @@
             document.getElementById(`chk-${s}-${o}`).classList.add('is-correct');
         };
         window.saveQuiz = async () => {
-            const t = document.getElementById('eng-title').value; if(!t || slides.length === 0) return alert("Preencha!");
+            const t = document.getElementById('eng-title').value; if(!t || slides.length === 0) return;
             await push(ref(db, 'library'), { title: t, questions: slides });
             update(ref(db, 'users/'+currentUser.uid), { coins: increment(50) });
             showScreen('screen-home');
