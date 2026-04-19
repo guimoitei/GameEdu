@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameEdu Universe - Ultimate Edition</title>
+    <title>GameEdu Universe - Ultimate Edition v8.3</title>
     <style id="ctage-theme">
         :root {
             --primary: #008751; --secondary: #005a36; --correct: #26890c; --accent: #ffcc00; --bg: #004d30; --white: #ffffff;
         }
-        body { background-color: var(--bg); font-family: 'Segoe UI', Arial, sans-serif; margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', Arial, sans-serif; margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: 0.5s; }
     </style>
     <style>
         /* DESIGN GLOBAL DE INPUTS */
@@ -41,29 +41,24 @@
         .screen { display: none; width: 100%; flex-direction: column; }
         .active { display: flex; }
 
-        /* ENGINE PROFISSIONAL */
+        /* ENGINE PROFISSIONAL ANTI-BUG */
         .engine-slide { background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
         .opt-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
-        .correct-btn { width: 45px; height: 42px; background: #eee; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 18px; }
+        .correct-btn { width: 45px; height: 42px; background: #eee; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
         .is-correct { background: var(--correct) !important; color: white; border-color: var(--correct) !important; }
 
-        /* WATCH PAGE (YOUTUBE STYLE) */
-        .watch-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+        /* PLAYER */
         .player-frame { background: #000; border-radius: 20px; aspect-ratio: 16/9; position: relative; overflow: hidden; border: 4px solid var(--accent); display: flex; align-items: center; justify-content: center; }
-        .game-embed { width: 100%; height: 100%; background: white; display: none; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; }
-        .suggestion-card { display: flex; gap: 10px; background: white; padding: 10px; border-radius: 10px; cursor: pointer; border: 1px solid #eee; margin-bottom: 10px; font-size: 13px; font-weight: bold; }
+        .game-view { width: 100%; height: 100%; background: white; display: none; flex-direction: column; align-items: center; padding: 30px; box-sizing: border-box; }
+        .g-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 20px; }
 
         /* UI */
         .btn-p { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
-        .btn-p:hover { transform: translateY(-2px); }
         #chat-box { flex: 1; background: #f8f9fa; border-radius: 12px; padding: 10px; overflow-y: auto; font-size: 13px; border: 1px solid #ddd; margin-bottom: 10px; }
         .quiz-card { background: white; border-radius: 15px; overflow: hidden; cursor: pointer; border-bottom: 5px solid #ddd; text-align: center; }
         .ranking-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; }
-
-        /* LOJA AVATAR */
         .loja-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-top: 15px; }
         .loja-item { background: #f9f9f9; padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid #eee; }
-        .loja-item:hover { border-color: var(--accent); }
     </style>
 </head>
 <body>
@@ -113,16 +108,16 @@
             </div>
 
             <div id="screen-watch" class="screen">
-                <div class="watch-layout">
+                <div style="display:grid; grid-template-columns: 1fr 320px; gap:20px;">
                     <div>
                         <div class="player-frame">
                             <div id="watch-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.8); display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:10; text-align:center;">
-                                <h1 id="watch-title-overlay">...</h1>
-                                <button onclick="startPlaySession()" style="background:var(--correct); color:white; padding:15px 40px; border-radius:50px; border:none; font-size:20px; cursor:pointer; font-weight:bold;">APITAR INÍCIO!</button>
+                                <h1 id="watch-title-overlay">Título</h1>
+                                <button onclick="startPlaySession()" style="background:var(--correct); color:white; padding:15px 40px; border-radius:50px; border:none; font-size:20px; cursor:pointer;">APITAR INÍCIO!</button>
                             </div>
-                            <div id="game-embed" class="game-embed">
-                                <h2 id="g-question-text" style="color:#333; margin-bottom:20px;"></h2>
-                                <div id="g-options" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;"></div>
+                            <div id="game-view" class="game-view">
+                                <h2 id="g-question-text" style="color:#222; text-align:center;"></h2>
+                                <div id="g-options-grid" class="g-options-grid"></div>
                             </div>
                         </div>
                         <h2 id="w-title-sub" style="color:white; margin-top:15px;">...</h2>
@@ -132,19 +127,20 @@
             </div>
 
             <div id="screen-engine" class="screen">
-                <div style="background:white; padding:30px; border-radius:20px; max-width:700px; margin:auto">
-                    <h2 style="color:var(--primary)">🚀 Criador Profissional</h2>
-                    <input type="text" id="eng-title" placeholder="Título do Quiz">
-                    <div id="eng-container"></div>
-                    <button onclick="addSlide()" style="background:#eee; width:100%; margin-top:10px; border:none; padding:10px; border-radius:8px;">+ Add Pergunta</button>
+                <div style="background:white; padding:30px; border-radius:20px; max-width:750px; margin:auto">
+                    <h2 style="color:var(--primary)">🚀 Criador de Quizzes</h2>
+                    <input type="text" id="eng-title-input" placeholder="Título do Quiz">
+                    <div id="eng-slides-list"></div>
+                    <button onclick="addNewSlide()" style="background:#eee; width:100%; margin-top:10px; border:none; padding:12px; border-radius:10px; cursor:pointer;">+ Adicionar Pergunta</button>
                     <button class="btn-p" style="margin-top:20px; background:var(--correct);" onclick="publishQuizToCloud()">Publicar Quiz (+50 ⚽)</button>
+                    <button onclick="showScreen('screen-home')" style="width:100%; background:none; color:gray; margin-top:10px; border:none; cursor:pointer;">Cancelar</button>
                 </div>
             </div>
 
             <div id="screen-avatar" class="screen">
                 <div style="background:white; padding:30px; border-radius:20px; max-width:500px; margin:auto;">
                     <h2>👕 Loja do Torcedor</h2>
-                    <p>Seu visual: <span id="display-avatar" style="font-size: 30px;">👤</span></p>
+                    <p>Visual atual: <span id="display-avatar" style="font-size: 30px;">👤</span></p>
                     <div class="loja-grid">
                         <div class="loja-item" onclick="buyAvatar('👤', 0)">👤<br>Free</div>
                         <div class="loja-item" onclick="buyAvatar('👕', 100)">👕<br>100⚽</div>
@@ -178,11 +174,12 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let user = null; let userData = null; let slides = []; let library = {}; let activeQuiz = null;
+        let user = null; let userData = null; let library = {}; let activeQuiz = null;
 
         // AUTH
         window.handleAuth = () => {
             const e = document.getElementById('auth-email').value; const p = document.getElementById('auth-password').value;
+            if(!e || p.length < 6) return alert("E-mail e senha de 6 dígitos são necessários!");
             signInWithEmailAndPassword(auth, e, p).catch(() => {
                 createUserWithEmailAndPassword(auth, e, p).then(r => set(ref(db, 'users/'+r.user.uid), {
                     username: e.split('@')[0], coins: 100, avatar: '👤'
@@ -236,41 +233,62 @@
             const grid = document.getElementById('quiz-list'); grid.innerHTML = "";
             Object.keys(library).forEach(id => {
                 const card = document.createElement('div'); card.className = "quiz-card";
-                card.innerHTML = `<div style="height:100px; background:var(--primary); font-size:40px; display:flex; align-items:center; justify-content:center;">⚽</div><div style="padding:10px;"><b>${library[id].title}</b></div>`;
+                card.innerHTML = `<div style="height:100px; background:var(--primary); font-size:40px; display:flex; align-items:center; justify-content:center; color:white;">⚽</div><div style="padding:10px;"><b>${library[id].title}</b></div>`;
                 card.onclick = () => goToWatch(id); grid.appendChild(card);
             });
         }
 
-        // ENGINE PRO
-        window.openEngine = () => { slides = []; document.getElementById('eng-container').innerHTML = ""; showScreen('screen-engine'); };
-        window.addSlide = () => {
-            const idx = slides.length; slides.push({q: "", options: ["","","",""], correct: 0});
-            const d = document.createElement('div'); d.className = "engine-slide";
-            d.innerHTML = `Lance ${idx+1}<input placeholder="Pergunta" oninput="slides[${idx}].q = this.value">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        // --- ENGINE COM FIX DEFINITIVO (VARREDURA DE DOM) ---
+        window.openEngine = () => { document.getElementById('eng-slides-list').innerHTML = ""; showScreen('screen-engine'); addNewSlide(); };
+        
+        window.addNewSlide = () => {
+            const idx = document.querySelectorAll('.engine-slide').length;
+            const div = document.createElement('div');
+            div.className = 'engine-slide';
+            div.dataset.correct = "0";
+            div.innerHTML = `
+                <b>Pergunta ${idx+1}</b>
+                <input type="text" class="q-val" placeholder="Escreva o enunciado aqui...">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
                     ${[0,1,2,3].map(o => `
-                        <div class="opt-row"><input placeholder="Opção ${o+1}" oninput="slides[${idx}].options[${o}] = this.value">
-                        <button class="correct-btn ${o==0?'is-correct':''}" id="chk-${idx}-${o}" onclick="window.setCorrect(${idx}, ${o})">✓</button></div>
+                        <div class="opt-row">
+                            <input type="text" class="o-val" placeholder="Opção ${o+1}">
+                            <button class="correct-btn ${o==0?'is-correct':''}" onclick="window.setCorrect(this, ${o})">✓</button>
+                        </div>
                     `).join('')}
                 </div>`;
-            document.getElementById('eng-container').appendChild(d);
-        };
-        window.setCorrect = (s, o) => {
-            slides[s].correct = o;
-            document.querySelectorAll(`[id^="chk-${s}"]`).forEach(b => b.classList.remove('is-correct'));
-            document.getElementById(`chk-${s}-${o}`).classList.add('is-correct');
-        };
-        window.publishQuizToCloud = async () => {
-            await push(ref(db, 'library'), {title: document.getElementById('eng-title').value, questions: slides});
-            update(ref(db, 'users/'+user.uid), {coins: increment(50)}); showScreen('screen-home');
+            document.getElementById('eng-slides-list').appendChild(div);
         };
 
-        // AVATAR
-        window.buyAvatar = (emoji, cost) => {
-            if(userData.coins >= cost) {
-                update(ref(db, 'users/' + user.uid), { avatar: emoji, coins: increment(-cost) });
-                alert("Visual atualizado!");
-            } else { alert("Moedas insuficientes!"); }
+        window.setCorrect = (btn, val) => {
+            const p = btn.closest('.engine-slide');
+            p.dataset.correct = val;
+            p.querySelectorAll('.correct-btn').forEach(b => b.classList.remove('is-correct'));
+            btn.classList.add('is-correct');
+        };
+
+        window.publishQuizToCloud = async () => {
+            const title = document.getElementById('eng-title-input').value;
+            const slideElements = document.querySelectorAll('.engine-slide');
+            const questions = [];
+
+            slideElements.forEach(slide => {
+                const qText = slide.querySelector('.q-val').value;
+                const oInputs = slide.querySelectorAll('.o-val');
+                const options = Array.from(oInputs).map(inp => inp.value);
+                const correct = slide.dataset.correct;
+
+                if(qText && options.every(opt => opt !== "")) {
+                    questions.push({ q: qText, options: options, correct: correct });
+                }
+            });
+
+            if(!title || questions.length === 0) return alert("Preencha o título e todas as opções de pelo menos uma pergunta!");
+            
+            await push(ref(db, 'library'), { title, questions });
+            update(ref(db, 'users/'+user.uid), { coins: increment(50) });
+            showScreen('screen-home');
+            alert("Quiz publicado! +50 Moedas.");
         };
 
         // WATCH & PLAY
@@ -278,29 +296,31 @@
             activeQuiz = library[id]; showScreen('screen-watch');
             document.getElementById('watch-title-overlay').innerText = activeQuiz.title;
             document.getElementById('w-title-sub').innerText = activeQuiz.title;
-            document.getElementById('watch-overlay').style.display='flex'; document.getElementById('game-embed').style.display='none';
-            const sugg = document.getElementById('watch-suggestions'); sugg.innerHTML = "";
-            Object.keys(library).filter(k => k !== id).slice(0, 3).forEach(k => {
-                const item = document.createElement('div'); item.className='suggestion-card';
-                item.innerHTML = `<div style="width:50px; height:30px; background:var(--primary); border-radius:4px;"></div><div>${library[k].title}</div>`;
-                item.onclick = () => goToWatch(k); sugg.appendChild(item);
-            });
+            document.getElementById('watch-overlay').style.display='flex'; document.getElementById('game-view').style.display='none';
         };
 
         window.startPlaySession = () => {
-            document.getElementById('watch-overlay').style.display='none'; document.getElementById('game-embed').style.display='flex';
+            document.getElementById('watch-overlay').style.display='none'; document.getElementById('game-view').style.display='flex';
             let step = 0;
+            const colors = ['#e21b3c', '#1368ce', '#d89e00', '#26890c'];
             const render = () => {
                 const q = activeQuiz.questions[step];
                 if(!q) { alert("Parabéns!"); update(ref(db, 'users/'+user.uid), {coins: increment(50)}); showScreen('screen-home'); return; }
                 document.getElementById('g-question-text').innerText = q.q;
-                const grid = document.getElementById('g-options'); grid.innerHTML = "";
-                q.options.forEach(opt => {
-                    const b = document.createElement('button'); b.className="btn-p"; b.style.marginBottom="5px"; b.innerText=opt;
+                const grid = document.getElementById('g-options-grid'); grid.innerHTML = "";
+                q.options.forEach((opt, i) => {
+                    const b = document.createElement('button'); b.className="btn-p"; b.style.background=colors[i]; b.innerText=opt;
                     b.onclick = () => {step++; render();}; grid.appendChild(b);
                 });
             };
             render();
+        };
+
+        window.buyAvatar = (emoji, cost) => {
+            if(userData.coins >= cost) {
+                update(ref(db, 'users/' + user.uid), { avatar: emoji, coins: increment(-cost) });
+                alert("Visual atualizado!");
+            } else { alert("Moedas insuficientes!"); }
         };
 
         window.showScreen = (id) => {
