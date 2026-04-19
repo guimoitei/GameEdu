@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameEdu Universe - Mobile Pro</title>
+    <title>GameEdu Universe - Full Design Fix</title>
     <style id="ctage-theme">
         :root {
             --primary: #008751; 
@@ -19,72 +19,82 @@
         }
     </style>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: 0.5s; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
+        /* ESTILO GLOBAL DE INPUTS (DESIGN FIX) */
+        input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: 0.3s;
+            outline: none;
+            background-color: #fff;
+        }
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(0, 135, 81, 0.3);
+        }
+
         /* HEADER */
         header { background: white; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; height: 65px; box-sizing: border-box; }
         .logo { color: var(--primary); font-weight: bold; font-size: 22px; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        
-        /* BOTÃO MENU MOBILE */
-        #mobile-menu-btn { display: none; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; font-size: 20px; cursor: pointer; margin-right: 10px; }
+        #mobile-menu-btn { display: none; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; font-size: 20px; cursor: pointer; }
 
-        .search-area { flex-grow: 1; margin: 0 20px; max-width: 600px; }
-        .search-area input { width: 100%; padding: 10px 15px; border-radius: 25px; border: 2px solid var(--primary); background: #f0f2f5; outline: none; }
-
-        .user-stats { display: flex; gap: 10px; align-items: center; font-weight: bold; font-size: 14px; }
-        .coin-display { color: #fff; background: linear-gradient(45deg, #ffd700, #ffa600); padding: 5px 12px; border-radius: 20px; box-shadow: 0 3px 0px #c58600; }
+        .search-area { flex-grow: 1; margin: 0 20px; max-width: 500px; }
+        .user-stats { display: flex; gap: 10px; align-items: center; font-weight: bold; }
+        .coin-display { color: #fff; background: linear-gradient(45deg, #ffd700, #ffa600); padding: 5px 15px; border-radius: 20px; box-shadow: 0 3px 0px #c58600; }
 
         /* LAYOUT */
         .main-container { display: flex; flex: 1; overflow: hidden; }
-        
-        /* SIDEBAR RESPONSIVA */
         .sidebar { width: 320px; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-right: 3px solid var(--accent); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; overflow-y: auto; transition: 0.3s; z-index: 2000; }
-        
         .content { flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box; position: relative; }
         
         .screen { display: none; width: 100%; }
         .active { display: flex; flex-direction: column; }
 
         /* PLAYER ORGANIZADO */
-        .watch-layout { display: grid; grid-template-columns: 1fr 380px; gap: 20px; max-width: 1500px; margin: 0 auto; width: 100%; }
+        .watch-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; max-width: 1400px; margin: 0 auto; width: 100%; }
         .player-frame { background: #111; border-radius: 20px; aspect-ratio: 16/9; position: relative; overflow: hidden; border: 4px solid var(--accent); display: flex; align-items: center; justify-content: center; }
         .game-view-container { width: 100%; height: 100%; background: white; display: none; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; }
-        .g-options-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; width: 100%; flex-grow: 1; }
+        .g-options-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; width: 100%; flex-grow: 1; margin-top: 15px; }
         .btn-game-opt { border: none; border-radius: 12px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0px rgba(0,0,0,0.2); }
 
-        /* ENGINE */
-        .engine-slide { background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; }
-        .opt-input-wrapper { display: flex; gap: 5px; margin-top: 10px; }
-        .correct-btn { width: 40px; height: 40px; background: #ddd; border: none; border-radius: 8px; cursor: pointer; }
-        .is-correct { background: var(--correct) !important; color: white; }
+        /* ENGINE CARDS */
+        .engine-slide { background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .opt-input-wrapper { display: flex; gap: 8px; align-items: center; width: 100%; }
+        .correct-btn { width: 50px; height: 45px; background: #eee; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; flex-shrink: 0; font-size: 18px; }
+        .is-correct { background: var(--correct) !important; color: white; border-color: var(--correct) !important; }
 
+        /* UI ELEMENTS */
+        .btn-p { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
         #chat-box { flex: 1; min-height: 200px; background: #f8f9fa; border-radius: 12px; padding: 10px; overflow-y: auto; font-size: 13px; border: 1px solid #ddd; margin-bottom: 10px; }
         .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .quiz-card { background: white; border-radius: 15px; overflow: hidden; cursor: pointer; border-bottom: 5px solid #ddd; }
+        .quiz-card { background: white; border-radius: 15px; overflow: hidden; cursor: pointer; border-bottom: 5px solid #ddd; text-align: center; }
 
-        /* @MEDIA - AJUSTES PARA CELULAR */
+        /* @MEDIA - MOBILE */
         @media (max-width: 900px) {
             #mobile-menu-btn { display: block; }
             .sidebar { position: fixed; left: -320px; top: 65px; bottom: 0; }
             .sidebar.open { left: 0; }
             .watch-layout { grid-template-columns: 1fr; }
-            .search-area { display: none; } /* Esconde busca no mobile para caber tudo */
-            .logo span { display: none; } /* Deixa só o emoji no mobile */
-            .player-frame { aspect-ratio: 4 / 3; } /* Player mais alto no celular */
-            #g-question-text { font-size: 18px; }
-            .btn-game-opt { font-size: 16px; }
+            .search-area { display: none; }
+            .player-frame { aspect-ratio: 4 / 3; }
         }
     </style>
 </head>
 <body>
 
-    <div id="screen-auth" class="screen active" style="margin-top: 60px;">
+    <div id="screen-auth" class="screen active" style="margin-top: 50px;">
         <div style="background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 90%; max-width: 400px; margin: 0 auto; text-align: center; border: 4px solid var(--primary);">
             <h1 style="color: var(--primary);">GameEdu</h1>
             <p style="font-weight: bold; color: #666;">🏆 CTAGE COPA 2026</p>
-            <input type="email" id="auth-email" placeholder="E-mail">
-            <input type="password" id="auth-password" placeholder="Senha">
-            <button class="btn-p" style="background:var(--primary); color:white; width:100%; padding:15px; border-radius:10px; border:none; font-weight:bold;" onclick="handleAuth()">ENTRAR NO CAMPO</button>
+            <input type="email" id="auth-email" placeholder="Seu melhor e-mail">
+            <input type="password" id="auth-password" placeholder="Sua senha secreta">
+            <button class="btn-p" onclick="handleAuth()">ENTRAR NO ESTÁDIO</button>
             <div id="auth-error" style="color: #e21b3c; margin-top: 15px; font-size: 14px;"></div>
         </div>
     </div>
@@ -95,24 +105,24 @@
             <a href="#" class="logo" onclick="location.reload()">⚽ <span>GameEdu</span></a>
         </div>
         <div class="search-area">
-            <input type="text" id="search-input" placeholder="Pesquisar..." onkeyup="searchQuizzes()">
+            <input type="text" id="search-input" placeholder="O que você quer aprender hoje?" onkeyup="searchQuizzes()">
         </div>
         <div class="user-stats">
             <span class="coin-display">⚽ <span id="user-coins">0</span></span>
-            <button onclick="logout()" style="background:#f0f0f0; border:none; padding: 8px; border-radius: 8px; cursor:pointer;">Sair</button>
+            <button onclick="logout()" style="background:#f0f0f0; border:none; padding: 8px 12px; border-radius: 8px; cursor:pointer; font-weight:bold;">Sair</button>
         </div>
     </header>
 
     <div class="main-container" id="app-content" style="display:none">
         <div class="sidebar" id="sidebar">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>💬 Chat</h3>
-                <button onclick="toggleSidebar()" class="mobile-only" style="display:none; background:none; border:none; font-size:20px;">✕</button>
+                <h3>💬 Chat da Galera</h3>
+                <button onclick="toggleSidebar()" style="background:none; border:none; font-size:20px; cursor:pointer;" class="mobile-only">✕</button>
             </div>
             <div id="chat-box"></div>
-            <input type="text" id="chat-input" placeholder="Comente..." onkeypress="if(event.key=='Enter') sendChat()">
+            <input type="text" id="chat-input" placeholder="Manda um alô..." onkeypress="if(event.key=='Enter') sendChat()">
             
-            <h3 style="margin-top: 20px;">🏆 Ranking</h3>
+            <h3 style="margin-top: 20px;">🏆 Ranking 2026</h3>
             <div id="ranking-list"></div>
         </div>
 
@@ -120,7 +130,7 @@
             <div id="screen-home" class="screen active">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <h2 style="color: white; text-shadow: 2px 2px 4px #000;">Quizzes</h2>
-                    <button class="btn-p" style="width:auto; background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px;" onclick="openEngine()">+ Novo</button>
+                    <button class="btn-p" style="width:auto; padding:10px 20px;" onclick="openEngine()">+ Criar Novo</button>
                 </div>
                 <div id="quiz-grid-home" class="quiz-grid"></div>
             </div>
@@ -131,16 +141,16 @@
                         <div class="player-frame">
                             <div id="watch-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.8); display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:10; text-align:center; padding:20px;">
                                 <h1 id="watch-title-overlay" style="font-size: 24px;">Título</h1>
-                                <button onclick="startPlaySession()" style="background:var(--correct); color:white; padding:15px 30px; border-radius:50px; border:none; font-size:18px; cursor:pointer; font-weight:bold;">JOGAR</button>
+                                <button onclick="startPlaySession()" style="background:var(--correct); color:white; padding:15px 30px; border-radius:50px; border:none; font-size:18px; cursor:pointer; font-weight:bold;">JOGAR AGORA</button>
                             </div>
                             <div id="game-view" class="game-view-container">
-                                <h2 id="g-question-text" style="font-size: 20px; text-align:center;">Pergunta?</h2>
+                                <h2 id="g-question-text" style="font-size: 20px; text-align:center; color: var(--secondary);">Pergunta?</h2>
                                 <div id="g-options-grid" class="g-options-grid"></div>
                             </div>
                         </div>
                         <div style="background:white; padding:15px; margin-top:10px; border-radius:15px;">
                             <h2 id="watch-title-main" style="margin:0; font-size: 18px;">Título</h2>
-                            <p style="color:#666; font-size:12px;">Copa 2026 • Ganhe 50 moedas</p>
+                            <p style="color:#666; font-size:12px;">Temporada Copa 2026 • Ganhe 50 ⚽</p>
                         </div>
                     </div>
                     <div class="watch-side" id="watch-suggestions-list"></div>
@@ -148,12 +158,12 @@
             </div>
 
             <div id="screen-engine" class="screen">
-                <div style="background:white; padding:20px; border-radius:20px; max-width:700px; margin:auto">
-                    <h2>🚀 Criador CTAGE</h2>
-                    <input type="text" id="eng-title" placeholder="Nome do Quiz">
+                <div style="background:white; padding:25px; border-radius:20px; max-width:750px; margin:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <h2 style="color: var(--primary);">🚀 Central de Criação</h2>
+                    <input type="text" id="eng-title" placeholder="Qual o título do seu Quiz?">
                     <div id="eng-slides-list"></div>
-                    <button onclick="addNewSlide()" style="background:#eee; width:100%; margin-top:10px; border:none; padding:10px; border-radius:8px;">+ Pergunta</button>
-                    <button class="btn-p" style="margin-top:20px; background:var(--correct); color:white; width:100%; padding:15px; border-radius:10px; border:none;" onclick="publishQuizToCloud()">Publicar</button>
+                    <button onclick="addNewSlide()" style="background:#eee; width:100%; margin-top:10px; border:1px solid #ddd; padding:12px; border-radius:10px; cursor:pointer;">+ Adicionar Nova Pergunta</button>
+                    <button class="btn-p" style="margin-top:20px; background:var(--correct);" onclick="publishQuizToCloud()">Publicar Quiz no Universo</button>
                 </div>
             </div>
         </div>
@@ -182,17 +192,12 @@
         let library = {};
         let activeQuiz = null;
 
-        // --- MOBILE SIDEBAR TOGGLE ---
-        window.toggleSidebar = () => {
-            const side = document.getElementById('sidebar');
-            side.classList.toggle('open');
-        };
+        window.toggleSidebar = () => { document.getElementById('sidebar').classList.toggle('open'); };
 
-        // --- AUTH ---
         window.handleAuth = () => {
             const e = document.getElementById('auth-email').value.trim();
             const p = document.getElementById('auth-password').value;
-            if(!e || p.length < 6) return alert("Dados inválidos!");
+            if(!e || p.length < 6) return alert("E-mail válido e senha (mín. 6)!");
             signInWithEmailAndPassword(auth, e, p).catch(() => {
                 createUserWithEmailAndPassword(auth, e, p).then(r => set(ref(db, 'users/'+r.user.uid), {username: e.split('@')[0], coins: 100}));
             });
@@ -249,7 +254,6 @@
             });
         }
 
-        // --- PLAYER ---
         window.goToWatchPage = (id) => {
             activeQuiz = library[id];
             showScreen('screen-watch');
@@ -279,14 +283,13 @@
             render();
         };
 
-        // --- ENGINE ---
         window.openEngine = () => { document.getElementById('eng-slides-list').innerHTML = ""; showScreen('screen-engine'); };
         window.addNewSlide = () => {
             const idx = document.querySelectorAll('.engine-slide').length;
             const div = document.createElement('div'); div.className = 'engine-slide'; div.dataset.correct = "0";
-            div.innerHTML = `<b>Lance ${idx+1}</b><input type="text" class="q-in" style="width:100%; padding:10px; margin:5px 0; border-radius:8px; border:1px solid #ddd;" placeholder="Pergunta">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                    ${[0,1,2,3].map(o => `<div class="opt-input-wrapper"><input type="text" class="o-in" style="width:100%; padding:8px; border-radius:5px; border:1px solid #eee;" placeholder="Opção ${o+1}"><button class="correct-btn ${o==0?'is-correct':''}" onclick="window.markC(this, ${o})">✓</button></div>`).join('')}
+            div.innerHTML = `<b>Pergunta ${idx+1}</b><input type="text" class="q-in" placeholder="Escreva aqui sua pergunta...">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    ${[0,1,2,3].map(o => `<div class="opt-input-wrapper"><input type="text" class="o-in" placeholder="Opção ${o+1}"><button class="correct-btn ${o==0?'is-correct':''}" onclick="window.markC(this, ${o})">✓</button></div>`).join('')}
                 </div>`;
             document.getElementById('eng-slides-list').appendChild(div);
         };
@@ -309,6 +312,10 @@
         window.showScreen = (id) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+        };
+        window.searchQuizzes = () => {
+            const term = document.getElementById('search-input').value.toLowerCase();
+            document.querySelectorAll('#quiz-grid-home > div').forEach(card => card.style.display = card.innerText.toLowerCase().includes(term) ? "block" : "none");
         };
     </script>
 </body>
